@@ -8,6 +8,6 @@ public interface UserDao {
     public User getUserByUsername(String username);
     public boolean addUser(User user);
     public User getUserByCodeAndUsername(String code, String username);
-
     void updateStatus(User user, String y);
+    User findUserByUsernameAndPassword(String username, String password);
 }

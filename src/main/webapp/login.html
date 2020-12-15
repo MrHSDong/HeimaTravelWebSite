@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html>
-<script type="text/javascript">
-	$(function(){
-		$("#login").click(function(){
-			$.post("user/login", $(this).serialize(), function(data){
 
-			})
-		})
-	})
-</script>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,9 +15,24 @@
       <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
       <!--导入angularJS文件-->
-    <script src="js/angular.min.js"></script>
+<!--    <script src="js/angular.min.js"></script>-->
 	<!--导入jquery-->
 	<script src="js/jquery-3.3.1.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$("#login").click(function(){
+				$.post("user/login", $("#loginForm").serialize(), function(data){
+					if(data["flag"]){
+						location.href = "index.html";
+					}else{
+						$("#errorMsg").html(data["msg"]);
+					}
+				})
+			})
+			changeCheckCode(document.getElementById("verifyCode"));
+
+		})
+	</script>
 </head>
 
 <body>
@@ -51,7 +58,7 @@
         			<input name="password" type="text" placeholder="请输入密码" autocomplete="off">
         			<div class="verify">
 					<input name="check" type="text" placeholder="请输入验证码" autocomplete="off">
-					<span><img src="checkCode" alt="" onclick="changeCheckCode(this)"></span>
+					<span><img id="verifyCode" src="checkCode" alt="" onclick="changeCheckCode(this)"></span>
 					<script type="text/javascript">
 						//图片点击事件
 						function changeCheckCode(img) {

@@ -11,6 +11,16 @@ public class UserServiceImpl implements UserService {
     private UserDao dao = new UserDaoImpl();
 
     @Override
+    public User login(User user) {
+        User u = null;
+        try{
+            u = dao.findUserByUsernameAndPassword(user.getUsername(), user.getPassword());
+        }catch (Exception e){
+        }
+        return u;
+    }
+
+    @Override
     public User active(String code,String username) {
         User user = dao.getUserByCodeAndUsername(code, username);
         if(user!=null){
@@ -27,7 +37,6 @@ public class UserServiceImpl implements UserService {
         {
             user.setStatus("N");
             String code = UuidUtil.getUuid();
-            System.out.println("Uuid: "+code);
             user.setCode(code);
             dao.addUser(user);
             MailUtils.sendMail(user.getEmail(),"<p>登陆成功，点击这里以<a href=http://localhost:80/travel/user/active?code="+user.getCode()+ "&username="+user.getUsername() +">激活</a></p>","账户激活");

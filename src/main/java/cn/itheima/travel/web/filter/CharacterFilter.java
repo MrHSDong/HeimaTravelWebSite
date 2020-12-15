@@ -18,7 +18,6 @@ public class CharacterFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse)resp;
         if(request.getMethod().equalsIgnoreCase("post")){
             request.setCharacterEncoding("utf-8");
-            System.out.println("posy");
         }
         response.setContentType("text/html;charset=utf-8");
         chain.doFilter(request, response);

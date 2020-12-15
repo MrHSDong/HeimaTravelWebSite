@@ -5,6 +5,19 @@
 	background-size: 100% 780px;
 	overflow: hidden;
 }
+
+.alert {
+	margin: 0 auto;
+	padding: 6px 10px;
+	border: 1px solid transparent;
+	text-align: left;
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	margin-bottom: 17px;
+	font-size: 12px;
+}
+
 .rg_layout .rg_form{
 	width: 886px;
 	height: 534px;

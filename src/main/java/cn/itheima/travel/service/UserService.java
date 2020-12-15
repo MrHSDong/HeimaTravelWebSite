@@ -3,6 +3,7 @@ package cn.itheima.travel.service;
 import cn.itheima.travel.domain.User;
 
 public interface UserService {
-    public boolean regist(User user);
-    public User active(String code,String username);
+    boolean regist(User user);
+    User active(String code,String username);
+    User login(User user);
 }

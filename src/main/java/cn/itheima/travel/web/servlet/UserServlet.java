@@ -19,12 +19,20 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.http.HttpRequest;
 import java.util.Map;
 
 @WebServlet("/user/*")
 public class UserServlet extends BaseServlet {
+
     private final ObjectMapper mapper = new ObjectMapper();
-    private  final UserService service = new UserServiceImpl();
+    private final UserService service = new UserServiceImpl();
+    private final PageInfo pageInfo = new PageInfo();
+
+    public HttpSession getSession(HttpServletRequest request){
+        return request.getSession();
+    }
+
     public void returnJson(Object obj, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(mapper.writeValueAsString(obj));
@@ -40,7 +48,7 @@ public class UserServlet extends BaseServlet {
         //将生成的验证码无效化
         session.invalidate();
         String code = request.getParameter("check");
-        PageInfo pageInfo = new PageInfo();
+
         boolean flag;
         //验证码正确
         if(code!=null && !code.equals("") && code.equalsIgnoreCase(sCode)){
@@ -72,10 +80,31 @@ public class UserServlet extends BaseServlet {
         }
     }
 
-//    public void login(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
-//        Map<String, String[]> map = request.getParameterMap();
-//        User user = new User();
-//        BeanUtils.populate(user, map);
-//        if()
-//    }
+    public void login(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
+        //获得表单提交的验证码
+        String code = request.getParameter("check");
+        String imgCode = (String)request.getSession().getAttribute("CHECKCODE_SERVER");
+        request.getSession().invalidate();
+        //比较提交的验证码和生成的验证码是否一致
+        if(code != null && !code.equals("") && code.equalsIgnoreCase(imgCode)){
+
+            Map<String, String[]> map = request.getParameterMap();
+            User user = new User();
+            BeanUtils.populate(user, map);
+            User loginUser =  service.login(user);
+            //登陆成功
+            if(loginUser !=null){
+                pageInfo.setFlag(true);
+                request.getSession().invalidate();
+                request.getSession().setAttribute("user", user);
+            }else{
+                pageInfo.setFlag(false);
+                pageInfo.setMsg("用户名或密码错误");
+            }
+        }else{
+            pageInfo.setFlag(false);
+            pageInfo.setMsg("验证码错误");
+        }
+        returnJson(pageInfo, response);
+    }
 }
