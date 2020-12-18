@@ -8,18 +8,17 @@ import cn.itheima.travel.util.MailUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
-import org.graalvm.compiler.lir.LIRInstruction;
+//import org.graalvm.compiler.lir.LIRInstruction;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.http.HttpRequest;
+//import java.net.http.HttpRequest;
+import java.net.HttpCookie;
+import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/user/*")
@@ -69,6 +68,7 @@ public class UserServlet extends BaseServlet {
     }
     public void active(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("utf-8");
+        //获得链接中的username和code
         String code = request.getParameter("code");
         String username = request.getParameter("username");
         //校验链接的code字段在数据库中是否存在
@@ -87,24 +87,34 @@ public class UserServlet extends BaseServlet {
         request.getSession().invalidate();
         //比较提交的验证码和生成的验证码是否一致
         if(code != null && !code.equals("") && code.equalsIgnoreCase(imgCode)){
-
             Map<String, String[]> map = request.getParameterMap();
             User user = new User();
             BeanUtils.populate(user, map);
             User loginUser =  service.login(user);
+
             //登陆成功
             if(loginUser !=null){
                 pageInfo.setFlag(true);
                 request.getSession().invalidate();
-                request.getSession().setAttribute("user", user);
+                request.getSession().setAttribute("user", loginUser);
             }else{
-                pageInfo.setFlag(false);
+                pageInfo.setFlag(false);        //验证码正确但用户名密码错误
                 pageInfo.setMsg("用户名或密码错误");
+
             }
-        }else{
+        }else{      //验证码错误
             pageInfo.setFlag(false);
             pageInfo.setMsg("验证码错误");
+
         }
+        //回写查询结果
         returnJson(pageInfo, response);
+    }
+    public void findOne(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User u =(User) request.getSession().getAttribute("user");
+        returnJson(u,response);
+    }
+    public void exit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.getSession().removeAttribute("user");
     }
 }
