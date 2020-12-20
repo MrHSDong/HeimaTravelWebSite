@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="HeimaTravelWebSite:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>HeimaTravelWebSite</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="exercise1-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="HeimaTravelWebSite:war exploded" />
+    </root>
+  </artifact>
+</component>

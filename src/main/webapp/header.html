@@ -1,13 +1,18 @@
 <!-- 头部 start -->
+<script src="js/routeList.js"></script>
 <script type="text/javascript">
+    //用户退出函数
     function exit(){
         $.get("user/exit",function(data){
+            //user/exit并不需要返回任何参数，只要请求过了就行
             if(data==null || data===""){
                 $("#hello").html("");
             }
         })
     }
+
     $(function(){
+        //从session中查询当前登陆的用户
         $.get("user/findOne",{},function(data){
             //如果返回的session中有记录
             if(data!=null && data!==""){
@@ -17,23 +22,36 @@
 
     })
     $(function () {
-    // <li class="nav-active"><a href="index.html">首页</a></li>
-    //     <li><a href="route_list.html">门票</a></li>
-    //     <li><a href="route_list.html">酒店</a></li>
-    //     <li><a href="route_list.html">香港车票</a></li>
-    //     <li><a href="route_list.html">出境游</a></li>
-    //     <li><a href="route_list.html">国内游</a></li>
-    //     <li><a href="route_list.html">港澳游</a></li>
-    //     <li><a href="route_list.html">抱团定制</a></li>
-    //     <li><a href="route_list.html">全球自由行</a></li>
-    //     <li><a href="favoriterank.html">收藏排行榜</a></li>
+        //通过servlet获得数据库中保存的category条目并展示到header中
         $.get("category/listAll",function (data) {
-            var lis = '<li class="nav-active"><a href="index.html">首页</a></li>';
+            var lis;
+            //从地址栏中判断是否是index页面
+            //如果是index页面则把首页按钮设置为nav-active状态
+            if(/index.html/.test(location.href)){
+                lis= '<li class="nav-active"><a href="index.html">首页</a></li>';
+            //如果不是则首页不是激活状态
+            }else{
+                lis= '<li><a href="index.html">首页</a></li>';
+            }
+            //将数据库中查询到的category字符串数组解析成json对象
             var parse = JSON.parse(data);
+            var index =0;
+            //遍历category数组，向ul中添加li列表
             for(var i of parse ){
-                lis+='<li><a href="route_list.html">'+i['cname']+'</a></li>';
+                //当前category的索引
+                index++;
+                var cid = location.href.split("=")[1];
+                //如果当前category索引与地址栏的cid一致，当前category项设置为nav-active
+                if(index===parseInt(cid)){
+                    //给每个category的li绑定一个ajax请求函数listByPage
+                    lis+='<li class="nav-active" onclick="listByPage('+i.cid+','+1+','+8+')"><a href=\"javascript:void(0)\">'+i['cname']+'</a></li>';
+                }else{
+                    lis+='<li onclick="listByPage('+i.cid+','+1+','+8+')"><a href=\"javascript:void(0)\">'+i['cname']+'</a></li>';
+
+                }
             }
             lis+='<li><a href="favoriterank.html">收藏排行榜</a></li>';
+            //将这些li填入ul
             $("ul[class='nav']").html(lis);
         })
     })
@@ -62,8 +80,8 @@
                     <a href="/"><img src="images/logo.jpg" alt=""></a>
                 </div>
                 <div class="search">
-                    <input name="" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
-                    <a href="javascript:;" class="search-button">搜索</a>
+                    <input id ="search" name="" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
+                    <a href="javascript:void(0)" class="search-button">搜索</a>
                 </div>
                 <div class="hottel">
                     <div class="hot_pic">

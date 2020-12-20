@@ -7,7 +7,6 @@ import cn.itheima.travel.service.CategoryService;
 import cn.itheima.travel.util.JedisUtil;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.beanutils.BeanUtils;
 import redis.clients.jedis.Jedis;
 

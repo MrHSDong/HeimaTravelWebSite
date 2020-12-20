@@ -1,4 +1,6 @@
+cn\itheima\travel\domain\PageBean.class
 cn\itheima\travel\web\filter\CharacterFilter.class
+cn\itheima\travel\web\servlet\RouteServlet.class
 cn\itheima\travel\util\MailUtils$1.class
 cn\itheima\travel\util\UuidUtil.class
 cn\itheima\travel\util\MailUtils.class
@@ -9,8 +11,10 @@ cn\itheima\travel\util\JDBCUtils.class
 cn\itheima\travel\web\servlet\BaseServlet.class
 cn\itheima\travel\util\JedisUtil.class
 cn\itheima\travel\dao\Impl\UserDaoImpl.class
+cn\itheima\travel\service\RouteService.class
 cn\itheima\travel\dao\UserDao.class
 cn\itheima\travel\service\Impl\UserServiceImpl.class
 cn\itheima\travel\service\UserService.class
 cn\itheima\travel\web\servlet\UserServlet.class
+cn\itheima\travel\service\Impl\RouteServiceImpl.class
 cn\itheima\travel\domain\User.class

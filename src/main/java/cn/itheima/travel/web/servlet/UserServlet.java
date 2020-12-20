@@ -110,11 +110,13 @@ public class UserServlet extends BaseServlet {
         //回写查询结果
         returnJson(pageInfo, response);
     }
+    //从session中获取当前登陆的user，并序列化返回给前台
     public void findOne(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User u =(User) request.getSession().getAttribute("user");
         returnJson(u,response);
     }
     public void exit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //将session中保存的user删除
         request.getSession().removeAttribute("user");
     }
 }
