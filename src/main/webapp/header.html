@@ -1,5 +1,6 @@
 <!-- 头部 start -->
 <script src="js/routeList.js"></script>
+<script src="js/getParameter.js"></script>
 <script type="text/javascript">
     //用户退出函数
     function exit(){
@@ -10,7 +11,12 @@
             }
         })
     }
-
+    //给搜索按钮绑定search函数，根据search传入的关键字获得pageBean
+    function search(){
+        var searchName = $("#search").val();
+        var cid = getParameter("cid");
+        listByPage(cid,1,8,searchName);
+    }
     $(function(){
         //从session中查询当前登陆的用户
         $.get("user/findOne",{},function(data){
@@ -81,7 +87,7 @@
                 </div>
                 <div class="search">
                     <input id ="search" name="" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
-                    <a href="javascript:void(0)" class="search-button">搜索</a>
+                    <a href="javascript:search()" class="search-button">搜索</a>
                 </div>
                 <div class="hottel">
                     <div class="hot_pic">

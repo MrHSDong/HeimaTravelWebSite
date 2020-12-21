@@ -29,4 +29,17 @@ public class CategoryDaoImpl implements CategoryDao {
         }
         return list;
     }
+
+    @Override
+    public Category getCategoryByCid(int cid) {
+        String sql = " select * from tab_category where cid = ? ";
+        Category c = null;
+        try{
+            c = template.queryForObject(sql, new BeanPropertyRowMapper<Category>(Category.class), cid);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("category: "+ c);
+        return c;
+    }
 }

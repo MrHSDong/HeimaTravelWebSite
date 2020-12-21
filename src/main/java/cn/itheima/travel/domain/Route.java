@@ -1,5 +1,7 @@
 package cn.itheima.travel.domain;
 
+import java.util.List;
+
 public class Route {
     private int rid;
     private String rname;
@@ -13,6 +15,34 @@ public class Route {
     private String rimage;
     private int sid;
     private String sourcedId;
+
+    private List<RouteImg> routeImgs;
+    private Seller seller;
+    private Category category;
+
+    public List<RouteImg> getRouteImgs() {
+        return routeImgs;
+    }
+
+    public void setRouteImgs(List<RouteImg> routeImgs) {
+        this.routeImgs = routeImgs;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public int getRid() {
         return rid;
@@ -125,6 +155,9 @@ public class Route {
                 ", rimage='" + rimage + '\'' +
                 ", sid=" + sid +
                 ", sourcedId='" + sourcedId + '\'' +
+                ", routeImgs=" + routeImgs +
+                ", seller=" + seller +
+                ", category=" + category +
                 '}';
     }
 }

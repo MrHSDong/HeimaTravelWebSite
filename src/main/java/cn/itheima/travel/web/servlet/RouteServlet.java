@@ -1,6 +1,7 @@
 package cn.itheima.travel.web.servlet;
 
 import cn.itheima.travel.domain.PageBean;
+import cn.itheima.travel.domain.Route;
 import cn.itheima.travel.service.Impl.RouteServiceImpl;
 import cn.itheima.travel.service.RouteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,14 +21,26 @@ public class RouteServlet extends BaseServlet {
     private ObjectMapper mapper = new ObjectMapper();
     public void queryByPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //获取ajax通过post请求传过来的三个参数
-        int pageIndex =Integer.parseInt(request.getParameter("pageIndex"));
-        int itemCount =Integer.parseInt(request.getParameter("itemCount"));
-        int cid =Integer.parseInt(request.getParameter("cid"));
-        //根据参数获得一个pageBean对象
-        PageBean pageBean = service.getPageBean(cid, pageIndex,itemCount);
-        //将pageBean对象序列化并返回给前台
-        returnJson(response,pageBean);
+        if("post".equalsIgnoreCase(request.getMethod())){
+            int pageIndex =Integer.parseInt(request.getParameter("pageIndex"));
+            int itemCount =Integer.parseInt(request.getParameter("itemCount"));
+            int cid =Integer.parseInt(request.getParameter("cid"));
+            String searchName = request.getParameter("search");
+            //根据参数获得一个pageBean对象
+            PageBean pageBean = service.getPageBean(cid, pageIndex,itemCount,searchName);
+            //将pageBean对象序列化并返回给前台
+            returnJson(response,pageBean);
+        }
 
+
+
+
+    }
+    public void detail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println(request.getParameter("rid"));
+        int rid =Integer.parseInt(request.getParameter("rid"));
+        Route route = service.getDetailRouteByRid(rid);
+        returnJson(response, route);
     }
     //将一个object对象序列化并返回
     private void returnJson(HttpServletResponse response, Object obj) throws IOException {

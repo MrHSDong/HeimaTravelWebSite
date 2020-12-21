@@ -7,6 +7,103 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/common.css">
     <link rel="stylesheet" type="text/css" href="css/route-detail.css">
+    <script src="js/getParameter.js"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script>
+        //定义当前展示大图的索引
+        var currentPic = 0;
+        //定义图片路径列表
+        var validPathList;
+        //根据图片名称切换展示大图
+        function changeBigPic(validName){
+            var src = "img/product/size2/m2"+validName;
+            $("img[class='big_img']").attr("src", src);
+            //清楚其他a标签的cur_img的class属性
+            $("dd a[data-bigpic]").attr("class", "little_img");
+            var bigPath ="img/product/small/m3"+validName;
+            //给当前展示图加上cur_img属性
+            $("a[data-bigpic=\'"+bigPath+"\']").attr("class", "little_img cur_img");
+            //更新当前展示图的索引
+            currentPic =  validPathList.indexOf(validName);
+        }
+
+        //根据长串的图片路径获取图片名称
+        function getValidName(path){
+            var name = path.split("/")[path.split("/").length-1];
+            var validName = name.substring(2,name.length);
+            return validName;
+        }
+
+        //上一页按钮
+        function prePage(){
+            if(currentPic>0){
+                currentPic = currentPic-1;
+                var name = validPathList[currentPic];
+                changeBigPic(name);
+            }
+
+        }
+        //下一页按钮
+        function aftPage(){
+            if(currentPic<validPathList.length-1){
+                currentPic=currentPic+1;
+                var name = validPathList[currentPic];
+                changeBigPic(name);
+            }
+        }
+        //rid为字符串类型
+        $(function(){
+            //从当前地址栏获取rid
+            var rid = getParameter("rid");
+            //发送get请求获得一个详细的route对象
+            $.get("route/detail", {"rid": rid}, function(data){
+                //填充数据
+                $("#category").html(data.category.cname);
+                $("#category").attr("href","route_list.html?cid="+data.category.cid);
+                $("#title").html(data.rname);
+                $("p[class='pros_title']").html(data.rname);
+                $("#sellerName").html(data.seller.sname);
+                $("#sellerPhone").html(data.seller.consphone);
+                $("#sellerAddr").html(data.seller.address);
+                $("img[class='big_img']").attr("src", data.routeImgs[0].smallpic);
+                //创建包含小图的空列表
+                validPathList= new Array();
+                //设置上一页按钮
+                var content = '<a class="up_img up_img_disable " onclick=prePage()></a>';
+                //遍历小图列表
+                for(var i = 0; i < data.routeImgs.length; i++){
+                    validPathList.push(getValidName(data.routeImgs[i].bigpic));
+                    //限制只出现四个smallimg，索引大于4的设置display：none
+                    if(i<4){
+                        //如果当前小图与大图的name相同，则设置class=cur_img;
+                        if(getValidName(data.routeImgs[i].bigpic)===getValidName($("img[class='big_img']").attr("src"))){
+                            content+='<a onclick=\"javascript:changeBigPic(\''+getValidName(data.routeImgs[i].bigpic)+'\')\" title="" class="little_img cur_img" data-bigpic=\"'+data.routeImgs[i].bigpic+'\"><img alt="" src=\"'+data.routeImgs[i].smallpic+'\"></a>';
+                            currentPic = i;
+                        }else{
+                            content+='<a onclick=\"javascript:changeBigPic(\''+getValidName(data.routeImgs[i].bigpic)+'\')\" title="" class="little_img" data-bigpic=\"'+data.routeImgs[i].bigpic+'\"><img alt="" src=\"'+data.routeImgs[i].smallpic+'\"></a>';
+                        }
+                    }else{
+                        if(getValidName(data.routeImgs[i].bigpic)===getValidName($("img[class='big_img']").attr("src"))){
+                            content+='<a style="display: none" onclick=\"javascript:changeBigPic(\''+getValidName(data.routeImgs[i].bigpic)+'\')\" title="" class="little_img cur_img" data-bigpic=\"'+data.routeImgs[i].bigpic+'\"><img alt="" src=\"'+data.routeImgs[i].smallpic+'\"></a>';
+                            currentPic=i;
+
+                        }else{
+                            content+='<a style="display: none" onclick=\"javascript:changeBigPic(\''+getValidName(data.routeImgs[i].bigpic)+'\')\" title="" class="little_img" data-bigpic=\"'+data.routeImgs[i].bigpic+'\"><img alt="" src=\"'+data.routeImgs[i].smallpic+'\"></a>';
+
+                        }
+
+                    }
+                }
+                content+=' <a class="down_img down_img_disable" style="margin-bottom: 0;" onclick=aftPage()></a>';
+
+
+
+                $("#dd").html(content);
+                // $("a[data-bigpic=\'"+bigPath+"\']").attr("class", "little_img cur_img");
+            },"json")
+        })
+
+    </script>
 </head>
 
 <body>
@@ -17,53 +114,24 @@
         <div class="bread_box">
             <a href="/">首页</a>
             <span> &gt;</span>
-            <a href="#">国内游</a><span> &gt;</span>
-            <a href="#">全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</a>
+            <a id="category" href="#"></a><span></span>
+            <a href="#" id="title"></a>
         </div>
         <div class="prosum_box">
             <dl class="prosum_left">
                 <dt>
-                    <img alt="" class="big_img" src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m49788843d72171643297ccc033d9288ee.jpg">
+                    <img alt="" class="big_img" src="#">
                 </dt>
-                <dd>
-                    <a class="up_img up_img_disable"></a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m40920d0669855e745d97f9ad1df966ebb.jpg">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m20920d0669855e745d97f9ad1df966ebb.jpg">
-                    </a>
-                    <a title="" class="little_img cur_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m49788843d72171643297ccc033d9288ee.jpg">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m29788843d72171643297ccc033d9288ee.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m4531a8dbceefa2c44e6d0e35627cd2689.jpg">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m2531a8dbceefa2c44e6d0e35627cd2689.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m46d8cb900e9f6c0a762aca19eae40c00c.jpg">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m26d8cb900e9f6c0a762aca19eae40c00c.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m45ea00f6eba562a767b5095bbf8cffe07.jpg" style="display:none;">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m25ea00f6eba562a767b5095bbf8cffe07.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m4265ec488cd1bc7ce749bc8c9b34b87bc.jpg" style="display:none;">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m2265ec488cd1bc7ce749bc8c9b34b87bc.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m4e7e964909d7dd1a9f6e5494d4dc0c847.jpg" style="display:none;">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m2e7e964909d7dd1a9f6e5494d4dc0c847.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m467db00e1b76718fab0fe8b96e10f4d35.jpg" style="display:none;">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m267db00e1b76718fab0fe8b96e10f4d35.jpg">
-                    </a>
-                    <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m487bbbc6e43eba6aa6a36cc1a182f7a20.jpg" style="display:none;">
-                        <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m287bbbc6e43eba6aa6a36cc1a182f7a20.jpg">
-                    </a>
-                    <a class="down_img down_img_disable" style="margin-bottom: 0;"></a>
+                <dd id="dd">
                 </dd>
             </dl>
             <div class="prosum_right">
-               <p class="pros_title">【尾单特卖】全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</p>
+               <p class="pros_title"></p>
                 <p class="hot">1-2月出发，网付立享￥1099/2人起！爆款位置有限，抢完即止！</p>
                 <div class="pros_other">
-                    <p>经营商家  ：黑马国旅</p>
-                    <p>咨询电话 : 400-618-9090</p>
-                    <p>地址 ： 传智播客黑马程序员</p>  
+                    <p>经营商家  ：<span id="sellerName"></span></p>
+                    <p>咨询电话 : <span id = "sellerPhone"></span></p>
+                    <p>地址 ： <span id="sellerAddr"></span></p>
                 </div>
                 <div class="pros_price">
                     <p class="price"><strong>¥2699.00</strong><span>起</span></p>
